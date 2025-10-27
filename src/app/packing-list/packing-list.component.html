@@ -1,9 +1,9 @@
 <div class="container">
   <h1>Packing List</h1>
 
-  <form (submit)="$event.preventDefault(); addItem()">
-    <input type="text" [value]="newItemName()" (input)="newItemName.set($event.target.value)" placeholder="Item name">
-    <select [value]="newItemCategory()" (change)="newItemCategory.set($event.target.value)">
+  <form (submit)="$event.preventDefault(); onAddItem()">
+    <input type="text" [value]="newItemName()" (input)="newItemName.set($any($event.target).value)" placeholder="Item name">
+    <select [value]="newItemCategory()" (change)="newItemCategory.set($any($event.target).value)">
       <option>Clothes</option>
       <option>Toiletries</option>
       <option>Electronics</option>
@@ -22,9 +22,9 @@
   @for (category of categories(); track category) {
     <div class="category-group">
       <h2>{{ category }}</h2>
-      @for (item of groupedItems()[category]; track item.id) {
+      @for (item of groupedItems().get(category); track item.id) {
         <div class="item" [class.packed]="item.packed">
-          <input type="checkbox" [checked]="item.packed" (change)="togglePacked(item.id)">
+          <input type="checkbox" [checked]="item.packed" (change)="togglePacked.emit(item.id)">
           <span class="item-name">{{ item.name }}</span>
         </div>
       }

@@ -1,61 +1,49 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PackingListService } from '../packing-list.service';
 import { PackingItem } from '../packing-item';
 
 @Component({
   selector: 'app-packing-list',
   imports: [CommonModule],
-  templateUrl: './packing-list.html',
-  styleUrls: ['./packing-list.css'],
+  templateUrl: './packing-list.component.html',
+  styleUrl: './packing-list.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PackingListComponent {
-  private packingListService = inject(PackingListService);
-
-  filter = signal<'all' | 'packed' | 'unpacked'>('all');
-
-  items = this.packingListService.getItems();
-
-  filteredItems = computed(() => {
-    const items = this.items();
-    switch (this.filter()) {
-      case 'packed':
-        return items.filter((item) => item.packed);
-      case 'unpacked':
-        return items.filter((item) => !item.packed);
-      default:
-        return items;
-    }
-  });
-
-  groupedItems = computed(() => {
-    return this.filteredItems().reduce((acc, item) => {
-      const category = item.category;
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-      acc[category].push(item);
-      return acc;
-    }, {} as { [key: string]: PackingItem[] });
-  });
-
-  categories = computed(() => Object.keys(this.groupedItems()));
+  items = input.required<PackingItem[]>();
+  addItem = output<{ name: string; category: string }>();
+  togglePacked = output<number>();
 
   newItemName = signal('');
   newItemCategory = signal('Clothes');
+  filter = signal<'all' | 'packed' | 'unpacked'>('all');
 
-  addItem() {
-    if (this.newItemName().trim()) {
-      this.packingListService.addItem({
-        name: this.newItemName().trim(),
-        category: this.newItemCategory(),
-      });
+  groupedItems = computed(() => {
+    const items = this.items();
+    const filteredItems = items.filter((item: PackingItem) => {
+        if (this.filter() === 'packed') return item.packed;
+        if (this.filter() === 'unpacked') return !item.packed;
+        return true;
+    });
+
+    const grouped = new Map<string, PackingItem[]>();
+    for (const item of filteredItems) {
+      const category = item.category;
+      if (!grouped.has(category)) {
+        grouped.set(category, []);
+      }
+      grouped.get(category)!.push(item);
+    }
+    return grouped;
+  });
+
+  categories = computed(() => Array.from(this.groupedItems().keys()));
+
+  onAddItem() {
+    const name = this.newItemName().trim();
+    if (name) {
+      this.addItem.emit({ name, category: this.newItemCategory() });
       this.newItemName.set('');
     }
-  }
-
-  togglePacked(id: number) {
-    this.packingListService.togglePacked(id);
   }
 }

@@ -1,17 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PackingListService } from '../packing-list.service';
+import { PackingItem } from '../packing-item';
 
 @Component({
   selector: 'app-summary',
   imports: [CommonModule],
-  templateUrl: './summary.html',
-  styleUrls: ['./summary.css'],
+  templateUrl: './summary.component.html',
+  styleUrl: './summary.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SummaryComponent {
-  private packingListService = inject(PackingListService);
-  private items = this.packingListService.getItems();
+  items = input.required<PackingItem[]>();
 
   totalItems = computed(() => this.items().length);
   packedItems = computed(() => this.items().filter((item) => item.packed).length);
