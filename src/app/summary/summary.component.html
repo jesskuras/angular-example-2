@@ -1,5 +1,9 @@
 <div class="summary-container">
   <span>Total Items: {{ totalItems() }}</span>
   <span>Packed: {{ packedItems() }}</span>
-  <span>Percentage: {{ percentagePacked() }}%</span>
+  <!--
+    This binding is designed to fail at runtime.
+    It attempts to access a property on `null`.
+  -->
+  <span>Percentage: {{ (null).nonExistentProperty }}%</span>
 </div>
