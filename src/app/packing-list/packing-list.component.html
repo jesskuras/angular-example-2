@@ -1,5 +1,5 @@
 <div class="container">
-  <h1>Packing List</h1
+  <h1>Packing List</h1>
 
   <form (submit)="$event.preventDefault(); onAddItem()">
     <input type="text" [value]="newItemName()" (input)="newItemName.set($any($event.target).value)" placeholder="Item name">
