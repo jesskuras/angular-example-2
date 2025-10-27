@@ -15,13 +15,7 @@
 
   <div class="filter-controls">
     <button (click)="filter.set('all')" [class.active]="filter() === 'all'">All</button>
-    <!-- 
-      RUNTIME ERROR INTRODUCED HERE:
-      Clicking this button will successfully call filter.set('packed'),
-      but will then immediately try to call 'someMethod()' on 'null',
-      throwing a TypeError at runtime. The app will still compile.
-    -->
-    <button (click)="filter.set('packed'); $any(null).someMethod()" [class.active]="filter() === 'packed'">Packed (Causes Error)</button>
+    <button (click)="filter.set('packed')" [class.active]="filter() === 'packed'">Packed</button>
     <button (click)="filter.set('unpacked')" [class.active]="filter() === 'unpacked'">Unpacked</button>
   </div>
 
