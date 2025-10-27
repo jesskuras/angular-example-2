@@ -42,10 +42,6 @@ export class PackingListComponent {
   onAddItem() {
     const name = this.newItemName().trim();
     if (name) {
-      // This will cause a runtime error when a new item is added.
-      const intentionalError: any = null;
-      intentionalError.willThrowError();
-
       this.addItem.emit({ name, category: this.newItemCategory() });
       this.newItemName.set('');
     }
