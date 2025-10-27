@@ -1,0 +1,33 @@
+<div class="container">
+  <h1>Packing List</h1>
+
+  <form (submit)="$event.preventDefault(); addItem()">
+    <input type="text" [value]="newItemName()" (input)="newItemName.set($event.target.value)" placeholder="Item name">
+    <select [value]="newItemCategory()" (change)="newItemCategory.set($event.target.value)">
+      <option>Clothes</option>
+      <option>Toiletries</option>
+      <option>Electronics</option>
+      <option>Documents</option>
+      <option>Miscellaneous</option>
+    </select>
+    <button type="submit" [disabled]="!newItemName().trim()">Add Item</button>
+  </form>
+
+  <div class="filter-controls">
+    <button (click)="filter.set('all')" [class.active]="filter() === 'all'">All</button>
+    <button (click)="filter.set('packed')" [class.active]="filter() === 'packed'">Packed</button>
+    <button (click)="filter.set('unpacked')" [class.active]="filter() === 'unpacked'">Unpacked</button>
+  </div>
+
+  @for (category of categories(); track category) {
+    <div class="category-group">
+      <h2>{{ category }}</h2>
+      @for (item of groupedItems()[category]; track item.id) {
+        <div class="item" [class.packed]="item.packed">
+          <input type="checkbox" [checked]="item.packed" (change)="togglePacked(item.id)">
+          <span class="item-name">{{ item.name }}</span>
+        </div>
+      }
+    </div>
+  }
+</div>
